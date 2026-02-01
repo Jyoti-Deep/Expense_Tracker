@@ -16,7 +16,16 @@ function ExpensesList() {
   }, []);
 
   useEffect(() => {
-    applyFilters();
+    let filtered = expenses;
+    if (filterCategory) {
+      filtered = expenses.filter(e => e.category === filterCategory);
+    }
+    if (sortDesc) {
+      filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+    } else {
+      filtered = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+    setFilteredExpenses(filtered);
   }, [expenses, filterCategory, sortDesc]);
 
   const fetchExpenses = async () => {
@@ -30,19 +39,6 @@ function ExpensesList() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const applyFilters = () => {
-    let filtered = expenses;
-    if (filterCategory) {
-      filtered = expenses.filter(e => e.category === filterCategory);
-    }
-    if (sortDesc) {
-      filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
-    } else {
-      filtered = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
-    }
-    setFilteredExpenses(filtered);
   };
 
   const total = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
